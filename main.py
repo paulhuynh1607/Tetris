@@ -15,7 +15,6 @@ dt = 0
 tempo = 0.6
 left = False
 right = False
-isBlock = False
 
 while running:
     # poll for events
@@ -40,9 +39,7 @@ while running:
 
     left = False
     right = False
-    if not isBlock:
-        block.create(screen)
-        isBlock = True
+    block.create(screen)
 
     time.sleep(tempo)
 
