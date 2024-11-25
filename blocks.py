@@ -9,17 +9,19 @@ class Blocks:
 
     def create(self, screen):
         pygame.draw.rect(screen, "blue", self.rect)
-        print("New block create")
 
     def falling(self, speed):
         if self.rect.y != 600:
             self.rect.move_ip(0, speed)
         else:
-            return False
+            self.rect.x = 150
+            self.rect.y = 30
 
     def left(self, speed):
-        self.rect.move_ip(speed, 0)
+        if self.rect.x != 30:
+            self.rect.move_ip(speed, 0)
 
     def right(self, speed):
-        self.rect.move_ip(speed, 0)
+        if self.rect.x != 270:
+            self.rect.move_ip(speed, 0)
 
