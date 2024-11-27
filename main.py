@@ -7,6 +7,7 @@ import time
 # pygame setup
 pygame.init()
 screen = pygame.display.set_mode((500, 700))
+pygame.display.set_caption("Tetris")
 clock = pygame.time.Clock()
 block = Blocks()
 background = Background()
@@ -17,10 +18,6 @@ left = False
 right = False
 
 while running:
-    # poll for events
-    # pygame.QUIT event means the user clicked X to close your window
-    screen.fill("black")
-    background.grid(10, 21, screen)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -29,7 +26,10 @@ while running:
                 left = True
             if event.key == K_RIGHT:
                 right = True
-
+    # poll for events
+    # pygame.QUIT event means the user clicked X to close your window
+    screen.fill("black")
+    background.draw_grid(screen)
     if left:
         block.left(-30)
     elif right:
@@ -39,7 +39,7 @@ while running:
 
     left = False
     right = False
-    block.create(screen)
+    block.draw(screen)
 
     time.sleep(tempo)
 
