@@ -1,14 +1,15 @@
+import time
+
 import pygame
-from GameLoadout import Background
 import random
-background = Background()
 
 tetrominos = [
     [[1, 1, 1],
      [0, 1, 0]],  # T-shape
     [[1, 1],
      [1, 1]],  # Square
-    [[1, 1, 1, 1]],  # Line
+    [[0, 0, 0, 0],
+     [1, 1, 1, 1]],  # Line
     [[1, 1, 0],
      [0, 1, 1]],  # Z-shape
     [[0, 1, 1],
@@ -20,22 +21,83 @@ tetrominos = [
 ]
 
 
+#
 class Blocks:
     def __init__(self):
-        self.random_block = 0
+        self.random_block = random.randint(0, 6)
+        self.each_block = []
+        self.size = 28
+        self.color = random.randint(1, 10)
+        self.isBlock = False
+        self.anchor_blockY = 0
+        self.most_right = 0
+        self.most_left = 0
+        self.isFalling = False
 
-    def draw(self):
-        shape = tetrominos[self.random_block]
-        background.grid[0][0] = 1
-        for i in shape:
-            for j in range(len(i)):
-                pass
+    def draw(self, background):
+        if not self.isBlock:
+            shape = tetrominos[self.random_block]
+            for y in range(len(shape)):
+                for x in range(len(shape[y])):
+                    if shape[y][x] != 0:
+                        background.change_grid(self.color, x, y)
+                        self.each_block.append([x, y])
+            self.isBlock = True
+            self.isFalling = True
+        else:
+            for i in range(len(self.each_block)):
+                background.change_grid(self.color, self.each_block[i][0], self.each_block[i][1])
 
-    def falling(self, speed):
-        pass
+    def falling(self, speed, background):
+        time.sleep(speed)
+        for x in self.each_block:
+            if x[1] >= self.anchor_blockY:
+                self.anchor_blockY = x[1]
+        for i in range(len(self.each_block)):
+            if self.anchor_blockY != 19 and not self.check_collide(background):
+                background.change_grid(0, self.each_block[i][0], self.each_block[i][1])
+                self.each_block[i][1] += 1
+                self.draw(background)
+            else:
+                self.update()
+                break
 
-    def left(self, speed):
-        pass
+    def right(self, background):
+        time.sleep(0.1)
+        self.most_right = self.each_block[0][0]
+        for block in self.each_block:
+            if block[0] > self.most_right:
+                self.most_right = block[0]
+        if self.most_right != 9:
+            for i in range(len(self.each_block)):
+                background.change_grid(0, self.each_block[i][0], self.each_block[i][1])
+                self.each_block[i][0] += 1
+                self.draw(background)
 
-    def right(self, speed):
-        pass
+    def left(self, background):
+        time.sleep(0.1)
+        self.most_left = self.each_block[0][0]
+        for block in self.each_block:
+            if block[0] < self.most_left:
+                self.most_left = block[0]
+        if self.most_left != 0:
+            for i in range(len(self.each_block)):
+                background.change_grid(0, self.each_block[i][0], self.each_block[i][1])
+                self.each_block[i][0] -= 1
+                self.draw(background)
+
+    def check_collide(self, background):
+        for i in range(len(self.each_block)):
+            if background.grid[self.each_block[i][1] - 1][self.each_block[i][0]] == self.color or 1:
+                print(background.grid[self.each_block[i][1] - 1][self.each_block[i][0]])
+                return False
+            else:
+                print("collide")
+                return True
+
+    def update(self):
+        self.each_block = []
+        self.anchor_blockY = 0
+        self.color = random.randint(1, 10)
+        self.random_block = random.randint(0, 6)
+        self.isBlock = False
