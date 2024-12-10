@@ -14,34 +14,30 @@ background = Background()
 running = True
 dt = 0
 tempo = 0.6
-left = False
-right = False
+isFalling = True
 
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
         if event.type == KEYDOWN:
+            isFalling = False
             if event.key == K_LEFT:
-                left = True
+                block.left(background)
             if event.key == K_RIGHT:
-                right = True
+                block.right(background)
+        else:
+            isFalling = True
     # poll for events
     # pygame.QUIT event means the user clicked X to close your window
     screen.fill("black")
     background.draw_grid(screen)
-    if left:
-        block.left(-30)
-    elif right:
-        block.right(30)
-    else:
-        isBlock = block.falling(30)
+    block.draw(background)
+    if isFalling:
+        block.falling(0.5, background)
 
     left = False
     right = False
-    block.draw(screen)
-
-    time.sleep(tempo)
 
     # flip() the display to put your work on screen
     pygame.display.flip()
