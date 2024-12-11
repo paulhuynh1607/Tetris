@@ -33,6 +33,7 @@ class Blocks:
         self.most_right = 0
         self.most_left = 0
         self.isFalling = False
+        self.main_blocks = [[0, 0], [1, 0], [2, 0], [3, 0]]
 
     def draw(self, background):
         if not self.isBlock:
@@ -53,14 +54,15 @@ class Blocks:
         for x in self.each_block:
             if x[1] >= self.anchor_blockY:
                 self.anchor_blockY = x[1]
-        for i in range(len(self.each_block)):
-            if self.anchor_blockY != 19 and not self.check_collide(background):
-                background.change_grid(0, self.each_block[i][0], self.each_block[i][1])
-                self.each_block[i][1] += 1
-                self.draw(background)
-            else:
-                self.update()
-                break
+
+        # Check for collision before moving down
+        if self.anchor_blockY < 19 and not self.check_collide(background):
+            for i in range(len(self.each_block)):
+                background.change_grid(0, self.each_block[i][0], self.each_block[i][1])  # Clear current position
+                self.each_block[i][1] += 1  # Move down
+            self.draw(background)  # Draw the new position
+        else:
+            self.update()  # Update the block if it can't fall
 
     def right(self, background):
         time.sleep(0.1)
@@ -87,13 +89,22 @@ class Blocks:
                 self.draw(background)
 
     def check_collide(self, background):
-        for i in range(len(self.each_block)):
-            if background.grid[self.each_block[i][1] - 1][self.each_block[i][0]] == self.color or 1:
-                print(background.grid[self.each_block[i][1] - 1][self.each_block[i][0]])
-                return False
-            else:
-                print("collide")
+
+        for block in self.each_block:
+            x, y = block[0], block[1]
+            print(block)
+            print(self.main_blocks)
+            for m in range(len(self.main_blocks)):
+                if self.main_blocks[m][1] <= y and self.main_blocks[m][0] == x:
+                    self.main_blocks[m][1] = y
+                    self.main_blocks[m][0] = x
+
+        for m in self.main_blocks:
+            x, y = m[0], m[1]
+            if background.grid[y + 1][x] != 0:
                 return True
+            else:
+                return False
 
     def update(self):
         self.each_block = []
@@ -101,3 +112,4 @@ class Blocks:
         self.color = random.randint(1, 10)
         self.random_block = random.randint(0, 6)
         self.isBlock = False
+        self.main_blocks = [[0, 0], [1, 0], [2, 0], [3, 0]]
