@@ -33,6 +33,7 @@ while running:
     screen.fill("black")
     background.draw_grid(screen)
     block.draw(background)
+    block.setup()
     if isFalling:
         block.falling(0.5, background)
 
