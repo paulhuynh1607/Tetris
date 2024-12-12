@@ -26,6 +26,8 @@ while running:
                 block.left(background)
             if event.key == K_RIGHT:
                 block.right(background)
+            if event.key == K_UP:
+                block.rotate(background)
         else:
             isFalling = True
     # poll for events
