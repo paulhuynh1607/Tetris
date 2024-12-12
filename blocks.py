@@ -79,7 +79,6 @@ class Blocks:
             self.update()  # Update the block if it can't fall
 
     def right(self, background):
-        time.sleep(0.1)
         if self.anchor_block_R != 9:
             if not self.collide_right:
                 for i in range(len(self.each_block)):
@@ -89,7 +88,6 @@ class Blocks:
         self.collide_right = False
 
     def left(self, background):
-        time.sleep(0.1)
         if self.anchor_block_L != 0:
             if not self.collide_left:
                 for i in range(len(self.each_block)):
@@ -119,6 +117,34 @@ class Blocks:
                 if background.grid[y][self.anchor_block_R + 1] != 0:
                     self.collide_right = True
         return False
+
+    def rotate(self, background):
+        old_block = self.each_block.copy()
+        center_x = sum(x for x, y in self.each_block) // len(self.each_block)
+        center_y = sum(y for x, y in self.each_block) // len(self.each_block)
+
+        new_block = []
+        for x, y in self.each_block:
+            new_x = center_x + (y - center_y)
+            new_y = center_y - (x - center_x)
+            new_block.append([new_x, new_y])
+
+        if all(0 <= x < 10 and 0 <= y < 20 for x, y in new_block):
+
+            for x, y in new_block:
+                if background.grid[y][x] != 0:
+                    self.each_block = old_block
+                    return
+            for x, y in old_block:
+                background.change_grid(0, x, y)
+
+            self.each_block = new_block
+            print(new_block)
+            print(self.each_block)
+            self.draw(background)
+        else:
+            self.each_block = old_block
+            print(self.each_block)
 
     def update(self):
         self.each_block = []
