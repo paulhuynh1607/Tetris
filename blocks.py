@@ -61,7 +61,6 @@ class Blocks:
                         background.change_grid(self.color, x, y)
                         self.each_block.append([x, y])
             self.isBlock = True
-            self.isFalling = True
         else:
             self.setup()
             for i in range(len(self.each_block)):
@@ -76,6 +75,7 @@ class Blocks:
                 self.each_block[i][1] += 1  # Move down
             self.draw(background)  # Draw the new position
         else:
+            self.each_block = []
             self.update()  # Update the block if it can't fall
 
     def right(self, background):
@@ -120,36 +120,35 @@ class Blocks:
 
     def rotate(self, background):
         old_block = self.each_block.copy()
-        center_x = sum(x for x, y in self.each_block) // len(self.each_block)
-        center_y = sum(y for x, y in self.each_block) // len(self.each_block)
-
         new_block = []
-        for x, y in self.each_block:
-            new_x = center_x + (y - center_y)
-            new_y = center_y - (x - center_x)
-            new_block.append([new_x, new_y])
+        if self.random_block == 1:
+            return
+        if self.anchor_blockY < 19 and self.anchor_blockY != 0:
+            center_x = sum(x for x, y in self.each_block) // len(self.each_block)
+            center_y = sum(y for x, y in self.each_block) // len(self.each_block)
+            for x, y in self.each_block:
+                new_x = center_x + (y - center_y)
+                new_y = center_y - (x - center_x)
+                new_block.append([new_x, new_y])
 
-        if all(0 <= x < 10 and 0 <= y < 20 for x, y in new_block):
-
+        if all(0 <= x < 10 and 1 <= y < 20 for x, y in new_block):
             for x, y in new_block:
-                if background.grid[y][x] != 0:
-                    self.each_block = old_block
-                    return
+                for x1, y1 in self.each_block:
+                    if background.grid[y][x] != 0 and background.grid[y][x] != background.grid[y1][x1]:
+                        self.each_block = old_block
+                        return
+
             for x, y in old_block:
                 background.change_grid(0, x, y)
 
             self.each_block = new_block
-            print(new_block)
-            print(self.each_block)
             self.draw(background)
         else:
             self.each_block = old_block
-            print(self.each_block)
 
     def update(self):
-        self.each_block = []
         self.anchor_blockY = 0
         self.color = random.randint(1, 10)
         self.random_block = random.randint(0, 6)
         self.isBlock = False
-        self.down_collide_blocks = [[0, 0], [1, 0], [2, 0], [3, 0]]
+        self.down_collide_blocks = []
