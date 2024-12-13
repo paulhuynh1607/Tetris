@@ -20,10 +20,12 @@ while running:
         if event.type == KEYDOWN:
             if event.key == K_LEFT:
                 block.left(background)
-            if event.key == K_RIGHT:
+            elif event.key == K_RIGHT:
                 block.right(background)
-            if event.key == K_UP:
+            elif event.key == K_UP:
                 block.rotate(background)
+            elif event.key == K_DOWN:
+                block.down(background)
 
     # poll for events
     # pygame.QUIT event means the user clicked X to close your window
@@ -31,13 +33,11 @@ while running:
     background.draw_grid(screen)
     block.draw(background)
     block.setup()
-    if block.anchor_blockY >= 16:
-        block.falling(0.2, background)
-    else:
-        block.falling(0.4, background)
 
-    left = False
-    right = False
+    if block.anchor_blockY >= 16:
+        block.falling(0.3, background)
+    else:
+        block.falling(0.5, background)
 
     # flip() the display to put your work on screen
     pygame.display.flip()
@@ -45,6 +45,5 @@ while running:
     # limits FPS to 60
     # dt is delta time in seconds since last frame, used for framerate-
     # independent physics.
-    dt = clock.tick(60) / 1000
 
 pygame.quit()
