@@ -12,7 +12,6 @@ class Background:
     def change_grid(self, value, x, y):
         self.grid[y][x] = value
 
-
     def colours(self):
         dark_grey = (26, 31, 40)
         green = (47, 230, 23)
@@ -32,6 +31,11 @@ class Background:
         for row in range(self.rows):
             for column in range(self.columns):
                 cell_value = self.grid[row][column]
-                cell_rect = pygame.Rect(column*self.size + 30, row*self.size + 30, self.size - 1, self.size - 1)
+                cell_rect = pygame.Rect(column * self.size + 30, row * self.size + 30, self.size - 1, self.size - 1)
                 pygame.draw.rect(screen, self.colour[cell_value], cell_rect)
 
+    def clear_row(self):
+        total_val = 0
+        for y, x in self.grid:
+            if self.grid[y][x] != 0:
+                total_val += 1
