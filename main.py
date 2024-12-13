@@ -2,7 +2,6 @@ import pygame
 from pygame.locals import *
 from blocks import Blocks
 from GameLoadout import Background
-import time
 
 # pygame setup
 pygame.init()
@@ -13,31 +12,29 @@ block = Blocks()
 background = Background()
 running = True
 dt = 0
-tempo = 0.6
-isFalling = True
 
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
         if event.type == KEYDOWN:
-            isFalling = False
             if event.key == K_LEFT:
                 block.left(background)
             if event.key == K_RIGHT:
                 block.right(background)
             if event.key == K_UP:
                 block.rotate(background)
-        else:
-            isFalling = True
+
     # poll for events
     # pygame.QUIT event means the user clicked X to close your window
     screen.fill("black")
     background.draw_grid(screen)
     block.draw(background)
     block.setup()
-    if isFalling:
-        block.falling(0.5, background)
+    if block.anchor_blockY >= 16:
+        block.falling(0.2, background)
+    else:
+        block.falling(0.4, background)
 
     left = False
     right = False
