@@ -17,7 +17,8 @@ tetrominos = [
     [[1, 0, 0],
      [1, 1, 1]],  # L-shape
     [[0, 0, 1],
-     [1, 1, 1]]  # J-shape
+     [1, 1, 1]],  # J-shape
+    [[1,1,1,1,1,1,1,1,1,1]]
 ]
 
 
@@ -58,8 +59,8 @@ class Blocks:
             for y in range(len(shape)):
                 for x in range(len(shape[y])):
                     if shape[y][x] != 0:
-                        background.change_grid(self.color, x, y)
-                        self.each_block.append([x, y])
+                        background.change_grid(self.color, x+4, y)
+                        self.each_block.append([x+4, y])
             self.isBlock = True
         else:
             self.setup()
