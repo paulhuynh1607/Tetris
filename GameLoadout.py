@@ -8,6 +8,7 @@ class Background:
         self.size = 30
         self.grid = [[0 for j in range(self.columns)] for i in range(self.rows)]
         self.colour = self.colours()
+        self.total_val = 0
 
     def change_grid(self, value, x, y):
         self.grid[y][x] = value
@@ -35,7 +36,17 @@ class Background:
                 pygame.draw.rect(screen, self.colour[cell_value], cell_rect)
 
     def clear_row(self):
-        total_val = 0
-        for y, x in self.grid:
-            if self.grid[y][x] != 0:
-                total_val += 1
+        # Iterate through the rows in reverse order to avoid index issues when removing rows
+        for y in range(self.rows - 1, -1, -1):
+            # Check if the current row is filled
+            if all(self.grid[y][x] != 0 for x in range(self.columns)):
+                # Clear the filled row
+                for x in range(self.columns):
+                    self.change_grid(0, x, y)
+                # Shift all rows above down by one
+                for row in range(y - 1, -1, -1):
+                    for col in range(self.columns):
+                        self.grid[row + 1][col] = self.grid[row][col]
+                    # Clear the now empty row
+                    for col in range(self.columns):
+                        self.grid[row][col] = 0
