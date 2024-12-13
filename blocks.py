@@ -76,11 +76,24 @@ class Blocks:
             self.draw(background)  # Draw the new position
         else:
             self.each_block = []
+            background.clear_row()
             self.update()  # Update the block if it can't fall
 
+    def down(self, background):
+        # Check for collision before moving down
+        if self.anchor_blockY < 19 and not self.check_collide(background):
+            for i in range(len(self.each_block)):
+                background.change_grid(0, self.each_block[i][0], self.each_block[i][1])  # Clear current position
+                self.each_block[i][1] += 1  # Move down
+            self.draw(background)  # Draw the new position
+        else:
+            self.each_block = []
+            background.clear_row()
+            self.update()
+
     def right(self, background):
-        if self.anchor_block_R != 9:
-            if not self.collide_right:
+        if self.anchor_block_R != 9 and self.anchor_blockY < 19:
+            if not self.collide_right and not self.check_collide(background):
                 for i in range(len(self.each_block)):
                     background.change_grid(0, self.each_block[i][0], self.each_block[i][1])
                     self.each_block[i][0] += 1
@@ -88,8 +101,8 @@ class Blocks:
         self.collide_right = False
 
     def left(self, background):
-        if self.anchor_block_L != 0:
-            if not self.collide_left:
+        if self.anchor_block_L != 0 and self.anchor_blockY < 19:
+            if not self.collide_left and not self.check_collide(background):
                 for i in range(len(self.each_block)):
                     background.change_grid(0, self.each_block[i][0], self.each_block[i][1])
                     self.each_block[i][0] -= 1
@@ -109,6 +122,7 @@ class Blocks:
         for m in range(len(self.down_collide_blocks)):
             x, y = self.down_collide_blocks[m][0], self.down_collide_blocks[m][1]
             if background.grid[y + 1][x] != 0:
+                background.clear_row()
                 return True
             if self.anchor_block_L != 0:
                 if background.grid[y][self.anchor_block_L - 1] != 0:
@@ -131,18 +145,19 @@ class Blocks:
                 new_y = center_y - (x - center_x)
                 new_block.append([new_x, new_y])
 
-        if all(0 <= x < 10 and 1 <= y < 20 for x, y in new_block):
-            for x, y in new_block:
-                for x1, y1 in self.each_block:
-                    if background.grid[y][x] != 0 and background.grid[y][x] != background.grid[y1][x1]:
-                        self.each_block = old_block
-                        return
+        if all(0 <= x < 10 and 1 <= y < 20 for x, y in new_block ):
+            if len(new_block) != 0:
+                for x, y in new_block:
+                    for x1, y1 in self.each_block:
+                        if background.grid[y][x] != 0 and background.grid[y][x] != background.grid[y1][x1]:
+                            self.each_block = old_block
+                            return
 
-            for x, y in old_block:
-                background.change_grid(0, x, y)
+                for x, y in old_block:
+                    background.change_grid(0, x, y)
 
-            self.each_block = new_block
-            self.draw(background)
+                self.each_block = new_block
+                self.draw(background)
         else:
             self.each_block = old_block
 
