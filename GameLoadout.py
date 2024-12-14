@@ -7,13 +7,13 @@ class Background:
         self.rows = 20
         self.size = 30
         self.grid = [[0 for j in range(self.columns)] for i in range(self.rows)]
-        self.colour = self.colours()
+        self.colour = self.colors()
         self.total_val = 0
 
     def change_grid(self, value, x, y):
         self.grid[y][x] = value
 
-    def colours(self):
+    def colors(self):
         dark_grey = (26, 31, 40)
         green = (47, 230, 23)
         red = (232, 18, 18)
@@ -50,3 +50,6 @@ class Background:
                     # Clear the now empty row
                     for col in range(self.columns):
                         self.grid[row][col] = 0
+                self.clear_row()
+            else:
+                return
