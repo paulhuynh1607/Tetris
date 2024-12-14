@@ -1,6 +1,4 @@
 import time
-
-import pygame
 import random
 
 tetrominos = [
@@ -18,13 +16,13 @@ tetrominos = [
      [1, 1, 1]],  # L-shape
     [[0, 0, 1],
      [1, 1, 1]],  # J-shape
-    [[1,1,1,1,1,1,1,1,1,1]]
 ]
 
 
 #
 class Blocks:
     def __init__(self):
+        self.isColliding = False
         self.random_block = random.randint(0, 6)
         self.each_block = []
         self.size = 28
@@ -33,7 +31,6 @@ class Blocks:
         self.anchor_blockY = 0
         self.anchor_block_R = 0
         self.anchor_block_L = 0
-        self.isFalling = False
         self.down_collide_blocks = []
         self.collide_left = False
         self.collide_right = False
@@ -54,13 +51,16 @@ class Blocks:
                 self.anchor_block_L = block[0]
 
     def draw(self, background):
+        self.isColliding = False
         if not self.isBlock:
+            self.each_block = []
+            self.anchor_blockY = 0
             shape = tetrominos[self.random_block]
             for y in range(len(shape)):
                 for x in range(len(shape[y])):
                     if shape[y][x] != 0:
-                        background.change_grid(self.color, x+4, y)
-                        self.each_block.append([x+4, y])
+                        background.change_grid(self.color, x + 4, y)
+                        self.each_block.append([x + 4, y])
             self.isBlock = True
         else:
             self.setup()
@@ -76,7 +76,6 @@ class Blocks:
                 self.each_block[i][1] += 1  # Move down
             self.draw(background)  # Draw the new position
         else:
-            self.each_block = []
             background.clear_row()
             self.update()  # Update the block if it can't fall
 
@@ -88,7 +87,6 @@ class Blocks:
                 self.each_block[i][1] += 1  # Move down
             self.draw(background)  # Draw the new position
         else:
-            self.each_block = []
             background.clear_row()
             self.update()
 
@@ -123,6 +121,7 @@ class Blocks:
         for m in range(len(self.down_collide_blocks)):
             x, y = self.down_collide_blocks[m][0], self.down_collide_blocks[m][1]
             if background.grid[y + 1][x] != 0:
+                self.isColliding = True
                 background.clear_row()
                 return True
             if self.anchor_block_L != 0:
@@ -146,7 +145,7 @@ class Blocks:
                 new_y = center_y - (x - center_x)
                 new_block.append([new_x, new_y])
 
-        if all(0 <= x < 10 and 1 <= y < 20 for x, y in new_block ):
+        if all(0 <= x < 10 and 1 <= y < 20 for x, y in new_block):
             if len(new_block) != 0:
                 for x, y in new_block:
                     for x1, y1 in self.each_block:
@@ -162,9 +161,17 @@ class Blocks:
         else:
             self.each_block = old_block
 
+    def check_game_end(self):
+        if self.anchor_blockY == 1 and self.isColliding:
+            return True
+        else:
+            self.isColliding = False
+            return False
+
     def update(self):
-        self.anchor_blockY = 0
         self.color = random.randint(1, 10)
         self.random_block = random.randint(0, 6)
         self.isBlock = False
         self.down_collide_blocks = []
+
+
