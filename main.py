@@ -14,36 +14,37 @@ running = True
 dt = 0
 
 while running:
+    screen.fill("black")
+    background.draw_grid(screen)
+    block.draw(background)
+    block.setup()
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
         if event.type == KEYDOWN:
             if event.key == K_LEFT:
                 block.left(background)
-            elif event.key == K_RIGHT:
+            if event.key == K_RIGHT:
                 block.right(background)
-            elif event.key == K_UP:
+            if event.key == K_UP:
                 block.rotate(background)
-            elif event.key == K_DOWN:
+            if event.key == K_DOWN:
                 block.down(background)
 
     # poll for events
     # pygame.QUIT event means the user clicked X to close your window
-    screen.fill("black")
-    background.draw_grid(screen)
-    block.draw(background)
-    block.setup()
+
+    if block.check_game_end():
+        print("stop")
+        running = False
 
     if block.anchor_blockY >= 16:
         block.falling(0.3, background)
     else:
-        block.falling(0.5, background)
+        block.falling(0.4, background)
 
     # flip() the display to put your work on screen
     pygame.display.flip()
-
-    # limits FPS to 60
-    # dt is delta time in seconds since last frame, used for framerate-
-    # independent physics.
 
 pygame.quit()
