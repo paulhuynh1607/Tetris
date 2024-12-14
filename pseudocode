@@ -1,0 +1,106 @@
+# ____main.py____
+# from pygame.locals import *
+# from blocks import Blocks
+# from GameLoadout import Background
+# from Scoreboard import scoreboard
+# import time
+
+# set up the screen with 500 by 700 dimension use pygame.display.setmode
+# set display caption to tetris
+# set the tempo and dt variable
+# set running = true
+
+# create the main function
+#   create the main while loop that runs the game until running false
+#       check if the game stop if yes then stop the game
+#       check if there are any keys input from the player up, down, left, right
+#       if up rotate the tetromino using the rotate function from blocks.py
+#       if down move the tetromino down by one using the down function from blocks.py
+#       if right move the tetromino right by one using the right function from blocks.py
+#       if left move the tetromino left by one using the left function from blocks.py
+
+#       Use the constantly falling function from blocks.py
+
+#       Fill the screen with background
+#       run the draw_grid method using the function from the class Background inside the GameLoadout.py
+#       Display the high score and current score using the function draw_score from Scoreboard.py
+#       draw the tetromino by using block.draw from blocks.py
+#       Use the function if_block_align() from GameLoadout.py to check if the blocks align
+#       use the check_score function from scoreboard.py to check if there is a new highscore
+#       make a delay to the game using time.sleep
+
+#       use display.filip to update the game screen
+#       use dt = clock.tick(60) / 1000 to limit the game to 60 fps
+
+
+# __blocks.py__
+# import pygame
+# from GameLoadout import Background
+# import random
+
+# make a list of tetromino that contains where would each pixel be in a 2x3 area
+# ex : [1, 1, 1],
+#      [0, 1, 0]], for T shape tetromino
+# create a class Blocks:
+#   create __init__ function
+#       create self. variable such as the size, rotation, x and y of the block
+#       create a random variable that will pick which block will be drawn randomly
+#   create draw_block function that will ask for the color and where would it be draw
+#       this function will draw the tetromino according to the random variable on the screen using pygame.draw
+#       change a value inside the variable of the grid to be not zero inside GameLoadout.py
+#   create falling function that ask for the speed of which it is falling
+#        Check if the collision function is true then stop
+#        if not then Decrease the y position of the block to make it fall
+#   create left function that ask for the speed of which it is moving
+#        Decrease the x position of the block to make it move left
+#   create right function that ask for the speed of which it is moving
+#        Check if the collision function is true then stop
+#        if not thenDecrease the x position of the block to make it move right
+#   create down function that ask for the speed of which it is moving
+#        Decrease the y position of the block to make it move down
+#   create rotate function
+#         change the rotation of the tetromino base on the current rotation
+#   create collision function
+#         check if the block touches the ground or another block
+#   create delete_block function
+#       Delete a block in a specific coordinate
+
+# __GameLoadout.py__
+# import pygame
+# from blocks import Blocks
+# from Scoreboard import scoreboard
+
+# create the background class
+#   create __init__ function
+#      create self. variable such as size, column, row of the grind
+#      create a list double list that contains a loop in which each value in the loop corresponds
+#      with each square in the grid. Creating a grid structure
+#   create function color
+#       return color needed for each square in the grid
+#   create function draw_grid
+#       Draw the grid on the screen according to value inside grind list
+#   create if_block_align
+#       Check if the blocks is on align on the grid list by seeing if there are no zeroes
+#       if so run the add_point function from scoreboard
+#       run the delete_block function from blocks.py to delete the corresponding block
+
+# __Scoreboard.py__
+# import pygame
+
+# create the scoreboard class
+#   create __init__ function
+#       set self. variable of the current score, the x and y coord of where the words will be
+#       open a text file, get the high score and store it in self.highscore
+#   create add_point function
+#       increase the current score by an appropriate amount
+#   create draw_score function
+#       display the high score on the screen using pygame function
+#   create check_score function
+#       check if the current score is higher than high score
+#           if so replace the high score with the current score
+
+
+
+
+
+
