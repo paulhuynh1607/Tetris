@@ -1,5 +1,5 @@
 import pygame
-
+import time
 
 class Background:
     def __init__(self):
@@ -32,15 +32,17 @@ class Background:
         for row in range(self.rows):
             for column in range(self.columns):
                 cell_value = self.grid[row][column]
-                cell_rect = pygame.Rect(column * self.size + 30, row * self.size + 30, self.size - 1, self.size - 1)
+                cell_rect = pygame.Rect(column * self.size + 30, row * self.size + 120, self.size - 1, self.size - 1)
                 pygame.draw.rect(screen, self.colour[cell_value], cell_rect)
 
-    def clear_row(self):
+    def clear_row(self, scoreboard):
         # Iterate through the rows in reverse order to avoid index issues when removing rows
         for y in range(self.rows - 1, -1, -1):
             # Check if the current row is filled
             if all(self.grid[y][x] != 0 for x in range(self.columns)):
+                time.sleep(0.1)
                 # Clear the filled row
+                scoreboard.add_point(10)
                 for x in range(self.columns):
                     self.change_grid(0, x, y)
                 # Shift all rows above down by one
@@ -50,6 +52,6 @@ class Background:
                     # Clear the now empty row
                     for col in range(self.columns):
                         self.grid[row][col] = 0
-                self.clear_row()
-            else:
-                return
+                self.clear_row(scoreboard)
+        return
+
