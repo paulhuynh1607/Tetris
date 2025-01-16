@@ -68,6 +68,7 @@ class Blocks:
                         self.background.change_grid(self.color, x + 4, y)
                         self.each_block.append([x + 4, y])
             self.isBlock = True
+            self.check_collide()
         else:
             self.setup()
             for i in range(len(self.each_block)):
@@ -189,12 +190,11 @@ class Blocks:
                 new_y = center_y - (x - center_x)
                 new_block.append([new_x, new_y])
 
-        if all(0 <= x < 10 and 1 <= y < 20 for x, y in new_block) and self.can_rotate:
+        if all(0 <= x < 10 and 1 <= y < 20 for x, y in new_block) and not self.check_collide():
             if len(new_block) != 0:
                 for x, y in old_block:
                     self.background.change_grid(0, x, y)
                 for x, y in new_block:
-                    print(self.background.grid[y][x])
                     if self.background.grid[y][x] != 0:
                         print("stop")
                         self.each_block = old_block
@@ -208,12 +208,7 @@ class Blocks:
                 self.rl = len(self.right_collide_blocks)
                 self.ll = len(self.left_collide_blocks)
                 self.dl = len(self.down_collide_blocks)
-                if self.rotate_time == 1 and self.random_block == 2:
-                    self.falling()
-                    self.rotate_time = 0
-                elif self.random_block == 2:
-                    self.rotate_time += 1
-                else:
+                if self.random_block == 6 or 5 or 2:
                     self.down()
         else:
             self.each_block = old_block
@@ -237,5 +232,4 @@ class Blocks:
         self.random_block = random.randint(0, 6)
         self.isBlock = False
         self.down_collide_blocks = []
-
 
