@@ -57,10 +57,12 @@ while running:
     if block.check_game_end():
         print("Game Over")  # Print game over message to console
         scoreboard.show_leaderboard()
-        if not background.play_again():
-            running = False  # Exit the game loop
-        else:
+        if background.play_again():
             print("Game starting over")
+            # Exit the game loop
+        else:
+            print("Thank you for playing!")
+            running = False
 
     scoreboard.check_score()
     scoreboard.render(screen)
