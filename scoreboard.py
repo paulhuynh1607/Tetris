@@ -40,6 +40,8 @@ class HighScoreManager:
 
     def get_highscore(self):
         """Retrieve a user's high score."""
+        self.highscores = dict(sorted(self.highscores.items(), key=lambda x: x[1], reverse=True))
+        self.save_highscores()
         highest_score_user = list(self.highscores.keys())[0]
         return self.highscores.get(highest_score_user, 0)
 
@@ -67,6 +69,7 @@ class Scoreboard:
         yes_or_no = input("Would you like to see the leaderboard? (yes or no) ").lower()
         if yes_or_no == "yes":
             self.highscore_manager.display_all_highscores()
+
 
     def ask_username(self):
         self.username = input("Please enter your username: ")
