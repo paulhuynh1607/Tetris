@@ -1,6 +1,7 @@
 import pygame
 import time
 
+
 class Background:
     def __init__(self):
         self.columns = 10
@@ -28,6 +29,19 @@ class Background:
 
         return [dark_grey, green, red, orange, yellow, purple, cyan, blue, white, dark_blue, light_blue]
 
+    def reset_grid(self):
+        self.grid = [[0 for j in range(self.columns)] for i in range(self.rows)]
+
+    def play_again(self):
+        yes_or_no = input("Would you like to play the game again?").lower()
+        if yes_or_no == "yes":
+            self.reset_grid()
+            return True
+        elif yes_or_no == "no":
+            return False
+        else:
+            self.play_again()
+
     def draw_grid(self, screen):
         for row in range(self.rows):
             for column in range(self.columns):
@@ -54,4 +68,3 @@ class Background:
                         self.grid[row][col] = 0
                 self.clear_row(scoreboard)
         return
-
