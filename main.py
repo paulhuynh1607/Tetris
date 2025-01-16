@@ -21,6 +21,10 @@ move_left = False
 move_right = False
 
 timer = 0
+rotate_timer = 0
+
+print("Thank you for playing a replicate of the original Tetris by Paul Huynh")
+scoreboard.ask_username()
 
 # Main game loop
 while running:
@@ -42,18 +46,24 @@ while running:
                 block.left()
             elif event.key == K_RIGHT:  # Move block right
                 block.right()
-            elif event.key == K_UP:  # Rotate block
-                block.rotate()
             elif event.key == K_DOWN:  # Move block down faster
                 block.down()
+            if event.key == K_UP:  # Rotate block
+                if rotate_timer >= 0.2:
+                    block.rotate()
+                    rotate_timer = 0
 
     # Check for game over condition
     if block.check_game_end():
         print("Game Over")  # Print game over message to console
-        running = False  # Exit the game loop
+        scoreboard.show_leaderboard()
+        if not background.play_again():
+            running = False  # Exit the game loop
+        else:
+            print("Game starting over")
 
     scoreboard.check_score()
-    screen.blit(scoreboard.text, scoreboard.textRect)
+    scoreboard.render(screen)
 
     # Update the display with new frame content
     pygame.display.flip()
@@ -61,6 +71,7 @@ while running:
     # Limit the frame rate to 60 FPS
     dt = clock.tick(60) / 1000  # Convert milliseconds to seconds for dt
     timer += dt
+    rotate_timer += dt
 
 # Quit pygame when the game loop ends
 pygame.quit()
