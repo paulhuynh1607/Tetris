@@ -1,4 +1,3 @@
-import time
 import random
 
 tetrominos = [
@@ -15,10 +14,7 @@ tetrominos = [
     [[1, 0, 0],
      [1, 1, 1]],  # L-shape
     [[0, 0, 1],
-     [1, 1, 1]],  # J-shape
-    [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-     [1, 0, 0, 0, 0, 0, 0, 0, 0, 1]]
+     [1, 1, 1]]  # J-shape
 ]
 
 
@@ -29,7 +25,7 @@ class Blocks:
         self.random_block = random.randint(0, 6)
         self.each_block = []
         self.size = 28
-        self.color = random.randint(1, 10)
+        self.color = random.randint(1, 9)
         self.isBlock = False
         self.anchor_blockY = 0
         self.anchor_block_R = 0
@@ -42,8 +38,13 @@ class Blocks:
         self.scoreboard = scoreboard
         self.background = background
         self.rotate_time = 0
+        self.can_rotate = True
+        self.rl = 0
+        self.ll = 0
+        self.dl = 0
 
     def setup(self):
+        self.can_rotate = True
         self.anchor_block_R = self.each_block[0][0]
         self.anchor_block_L = self.each_block[0][0]
         for block in self.each_block:
@@ -103,6 +104,9 @@ class Blocks:
                     self.background.change_grid(0, self.each_block[i][0], self.each_block[i][1])
                     self.each_block[i][0] += 1
                     self.draw()
+            else:
+                self.collide_right = False
+                return
         self.collide_right = False
 
     def left(self):
@@ -113,20 +117,41 @@ class Blocks:
                     self.background.change_grid(0, self.each_block[i][0], self.each_block[i][1])
                     self.each_block[i][0] -= 1
                     self.draw()
+            else:
+                self.collide_left = False
+                return
         self.collide_left = False
 
-    def check_collide(self):
+    def find_key_block(self):
+        self.right_collide_blocks = []
+        self.left_collide_blocks = []
+        self.down_collide_blocks = []
         for block in self.each_block:
             x, y = block[0], block[1]
             if self.anchor_blockY != 19:
-                if self.background.grid[y+1][x] == 0:
+                if self.background.grid[y + 1][x] == 0:
                     self.down_collide_blocks.append([x, y])
             if self.anchor_block_L != 0:
-                if self.background.grid[y][x-1] == 0:
+                if self.background.grid[y][x - 1] == 0:
                     self.left_collide_blocks.append([x, y])
             if self.anchor_block_R != 9:
-                if self.background.grid[y][x+1] == 0:
+                if self.background.grid[y][x + 1] == 0:
                     self.right_collide_blocks.append([x, y])
+
+    def check_collide(self):
+        if not self.ll or not self.rl or not self.dl:
+            self.rl = len(self.right_collide_blocks)
+            self.ll = len(self.left_collide_blocks)
+            self.dl = len(self.down_collide_blocks)
+        self.find_key_block()
+
+        if self.rl > len(self.right_collide_blocks):
+            self.collide_right = True
+        if self.ll > len(self.left_collide_blocks):
+            self.collide_left = True
+        if self.dl > len(self.down_collide_blocks):
+            self.isColliding = True
+            return True
 
         if self.anchor_block_L != 0:
             for i in range(len(self.left_collide_blocks)):
@@ -149,9 +174,6 @@ class Blocks:
                     self.background.clear_row(self.scoreboard)
                     self.down_collide_blocks = []
                     return True
-        self.right_collide_blocks = []
-        self.left_collide_blocks = []
-        self.down_collide_blocks = []
         return False
 
     def rotate(self):
@@ -167,38 +189,51 @@ class Blocks:
                 new_y = center_y - (x - center_x)
                 new_block.append([new_x, new_y])
 
-        if all(0 <= x < 10 and 1 <= y < 20 for x, y in new_block):
+        if all(0 <= x < 10 and 1 <= y < 20 for x, y in new_block) and self.can_rotate:
             if len(new_block) != 0:
-                for x, y in new_block:
-                    for x1, y1 in self.each_block:
-                        if self.background.grid[y][x] != 0 and self.background.grid[y][x] != self.background.grid[y1][x1]:
-                            self.each_block = old_block
-                            return
-
                 for x, y in old_block:
                     self.background.change_grid(0, x, y)
+                for x, y in new_block:
+                    print(self.background.grid[y][x])
+                    if self.background.grid[y][x] != 0:
+                        print("stop")
+                        self.each_block = old_block
+                        for x1, y1 in old_block:
+                            self.background.change_grid(self.color, x1, y1)
+                        return
 
                 self.each_block = new_block
                 self.draw()
+                self.find_key_block()
+                self.rl = len(self.right_collide_blocks)
+                self.ll = len(self.left_collide_blocks)
+                self.dl = len(self.down_collide_blocks)
                 if self.rotate_time == 1 and self.random_block == 2:
                     self.falling()
                     self.rotate_time = 0
                 elif self.random_block == 2:
                     self.rotate_time += 1
                 else:
-                    self.falling()
+                    self.down()
         else:
             self.each_block = old_block
 
     def check_game_end(self):
-        if self.anchor_blockY == 1 and self.isColliding:
+        if self.anchor_blockY <= 2 and self.isColliding:
             return True
         else:
             self.isColliding = False
             return False
 
     def update(self):
-        self.color = random.randint(1, 10)
+        self.can_rotate = False
+        self.rl = 0
+        self.ll = 0
+        self.dl = 0
+        self.right_collide_blocks = []
+        self.left_collide_blocks = []
+        self.down_collide_blocks = []
+        self.color = random.randint(1, 9)
         self.random_block = random.randint(0, 6)
         self.isBlock = False
         self.down_collide_blocks = []
