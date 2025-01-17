@@ -21,7 +21,6 @@ move_left = False
 move_right = False
 
 timer = 0
-rotate_timer = 0
 game_speed = 1
 
 # Introduction
@@ -37,7 +36,7 @@ while running:
     block.setup()  # Update block anchor positions and setup
 
     if timer >= game_speed:
-        block.down()
+        block.down(game_speed)
         timer = 0
 
     # Handle events (key presses, key releases, quitting)
@@ -46,15 +45,13 @@ while running:
             running = False
         if event.type == KEYDOWN:  # Handle key presses
             if event.key == K_UP:  # Rotate block
-                if rotate_timer >= 0.2:
-                    block.rotate()
-                    rotate_timer = 0
+                block.rotate(game_speed)
             elif event.key == K_LEFT:  # Move block left
                 block.left()
             elif event.key == K_RIGHT:  # Move block right
                 block.right()
             elif event.key == K_DOWN:  # Move block down faster
-                block.down()
+                block.down(game_speed)
 
     # Check for game over condition
     if block.check_game_end():
@@ -64,7 +61,9 @@ while running:
             running = False  # Exit the game loop
         else:
             print("Game starting over")
+            #  Resetting game level
             game_speed = 1
+            scoreboard.curr_score = 0
 
     scoreboard.check_score()  # Check for higher score
     scoreboard.render(screen)  # Render scoreboard on screen
@@ -75,8 +74,7 @@ while running:
     # Limit the frame rate to 60 FPS
     dt = clock.tick(60) / 1000  # Convert milliseconds to seconds for dt
     timer += dt
-    rotate_timer += dt
-    game_speed = max(0.2, game_speed - 0.02)  # Ensure game_speed does not drop below 0.5
+
 
 # Quit pygame when the game loop ends
 pygame.quit()
