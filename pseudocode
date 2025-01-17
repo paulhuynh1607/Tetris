@@ -9,9 +9,18 @@
 # set display caption to tetris
 # set the tempo and dt variable
 # set running = true
+# set timer variable
+# set game speed variable
 
-# create the main function
-#   create the main while loop that runs the game until running false
+# Print introduction message to console
+# Ask for username from scoreboard
+
+#  create the main while loop that runs the game until running false
+#       Fill the screen with background
+#       run the draw_grid method using the function from the class Background inside the GameLoadout.py
+
+#       Use the constantly falling function from blocks.py if timer exceed game speed
+
 #       check if the game stop if yes then stop the game
 #       check if there are any keys input from the player up, down, left, right
 #       if up rotate the tetromino using the rotate function from blocks.py
@@ -19,19 +28,22 @@
 #       if right move the tetromino right by one using the right function from blocks.py
 #       if left move the tetromino left by one using the left function from blocks.py
 
-#       Use the constantly falling function from blocks.py
-
-#       Fill the screen with background
-#       run the draw_grid method using the function from the class Background inside the GameLoadout.py
 #       Display the high score and current score using the function draw_score from Scoreboard.py
-#       draw the tetromino by using block.draw from blocks.py
-#       Use the function if_block_align() from GameLoadout.py to check if the blocks align
-#       use the check_score function from scoreboard.py to check if there is a new highscore
-#       make a delay to the game using time.sleep
-
-#       use display.filip to update the game screen
-#       use dt = clock.tick(60) / 1000 to limit the game to 60 fps
-
+#       If game over condition is met:
+#         Print "Game Over" to console
+#         Show leaderboard
+#         Ask if the player wants to play again:
+#             If no, exit the game loop
+#             If yes, reset game speed and continue the game
+#
+#     Check for score updates and render scoreboard on screen
+#
+#     Update display with the new frame
+#
+#     Limit frame rate to 60 FPS
+#     Update delta time 'dt' for each frame
+#     Increase timers for movement and rotation speed
+#  Quit Pygame when the game ends
 
 # __blocks.py__
 # import pygame
@@ -41,29 +53,43 @@
 # make a list of tetromino that contains where would each pixel be in a 2x3 area
 # ex : [1, 1, 1],
 #      [0, 1, 0]], for T shape tetromino
+
 # create a class Blocks:
 #   create __init__ function
+#       To initialize variables
 #       create self. variable such as the size, rotation, x and y of the block
 #       create a random variable that will pick which block will be drawn randomly
-#   create draw_block function that will ask for the color and where would it be draw
+
+#   create draw function that will ask for the color and where would it be drawn
 #       this function will draw the tetromino according to the random variable on the screen using pygame.draw
 #       change a value inside the variable of the grid to be not zero inside GameLoadout.py
-#   create falling function that ask for the speed of which it is falling
-#        Check if the collision function is true then stop
-#        if not then Decrease the y position of the block to make it fall
-#   create left function that ask for the speed of which it is moving
+
+#   create setup function
+#       Find the lowest of the block is
+#       Find the most left part of the block
+#       Find the most right part of the block
+
+
+#   create down function
+#         Check if it's moving into another
+#         if not then Decrease the y position of the block to make it fall
+
+#   create left function
+#        Check if it's moving into another
 #        Decrease the x position of the block to make it move left
-#   create right function that ask for the speed of which it is moving
-#        Check if the collision function is true then stop
+
+#   create right function
+#        Check if it's moving into another
 #        if not thenDecrease the x position of the block to make it move right
-#   create down function that ask for the speed of which it is moving
-#        Decrease the y position of the block to make it move down
+
+
 #   create rotate function
+#         Check if the rotation is rotating into another block
 #         change the rotation of the tetromino base on the current rotation
+
 #   create collision function
 #         check if the block touches the ground or another block
-#   create delete_block function
-#       Delete a block in a specific coordinate
+
 
 # __GameLoadout.py__
 # import pygame
@@ -79,18 +105,50 @@
 #       return color needed for each square in the grid
 #   create function draw_grid
 #       Draw the grid on the screen according to value inside grind list
-#   create if_block_align
+#   create clear_row function
 #       Check if the blocks is on align on the grid list by seeing if there are no zeroes
 #       if so run the add_point function from scoreboard
 #       run the delete_block function from blocks.py to delete the corresponding block
+#   create play_again function
+#       ask if the user want to play again
 
 # __Scoreboard.py__
 # import pygame
 
+# create Highscore manager class
+#   create __init__ function
+#       Store the filename
+#       Load highscores through the load highscores function
+#     Method load_highscores():
+#         Try to open and read the highscores file:
+#             If file exists and is valid, load the highscores from the file into a dictionary
+#         If file is not found or data is corrupted, return an empty dictionary
+#     create function save_highscores():
+#         Open file in write mode and save the current highscores to the file in JSON format
+# 
+#     create function add_score(username, score):
+#         If username is in highscores:
+#             If the new score is higher than the existing high score:
+#                 Update the highscores dictionary with the new score for that username
+#         Else:
+#             Add a new entry with the username and score
+#         Save updated highscores to the file
+# 
+#     create function get_highscore():
+#         Sort the highscores in descending order by score
+#         Get the user with the highest score
+#         Return the highest score (0 if there are no scores)
+# 
+#     create function display_all_highscores():
+#         Print all highscores and the associated usernames
+
+
 # create the scoreboard class
 #   create __init__ function
 #       set self. variable of the current score, the x and y coord of where the words will be
-#       open a text file, get the high score and store it in self.highscore
+#       Store the font of the letter
+#       Store the highscore and the curr score
+
 #   create add_point function
 #       increase the current score by an appropriate amount
 #   create draw_score function
@@ -98,9 +156,3 @@
 #   create check_score function
 #       check if the current score is higher than high score
 #           if so replace the high score with the current score
-
-
-
-
-
-
