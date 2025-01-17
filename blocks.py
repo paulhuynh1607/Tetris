@@ -80,7 +80,7 @@ class Blocks:
             for i in range(len(self.each_block)):  # Loop through the block's squares.
                 self.background.change_grid(self.color, self.each_block[i][0], self.each_block[i][1])  # Draw them.
 
-    def down(self):
+    def down(self, game_speed):
         # Move the block down by one row, handling collisions and clearing rows.
         new_block = []  # Temporary list to store the new positions.
         old_block = self.each_block.copy()  # Copy the current positions.
@@ -93,14 +93,14 @@ class Blocks:
                 if self.background.grid[y][x] != 0:  # If the new position is occupied:
                     self.each_block = old_block  # Revert to the old positions.
                     self.draw()  # Redraw the block.
-                    self.background.clear_row(self.scoreboard)  # Clear any completed rows.
+                    self.background.clear_row(self.scoreboard, game_speed)  # Clear any completed rows.
                     self.update()  # Prepare a new block.
                     self.isColliding = True  # Set the collision flag.
                     return
             self.each_block = new_block  # Update to the new positions.
             self.draw()  # Draw the block in its new position.
         else:  # If the block is at the bottom:
-            self.background.clear_row(self.scoreboard)  # Clear any completed rows.
+            self.background.clear_row(self.scoreboard, game_speed)  # Clear any completed rows.
             self.update()  # Prepare a new block.
 
     def right(self):
@@ -137,7 +137,7 @@ class Blocks:
             self.each_block = new_block  # Update to the new positions.
             self.draw()  # Draw the block in its new position.
 
-    def rotate(self):
+    def rotate(self, game_speed):
         # Rotate the block around its center, if possible.
         old_block = self.each_block.copy()  # Copy the current positions.
         new_block = []  # Temporary list to store the rotated positions.
@@ -153,7 +153,7 @@ class Blocks:
                 new_block.append([new_x, new_y])  # Append the rotated block's new coordinates
 
             # Check if the new block positions are within the valid grid boundaries (0 ≤ x < 10, 1 ≤ y < 20).
-            if all(0 <= x < 10 and 1 <= y < 20 for x, y in new_block):
+            if all(0 <= x < 10 and 0 <= y < 20 for x, y in new_block):
                 if len(new_block) != 0:
                     # Clear the old block positions from the background grid.
                     for x, y in old_block:
@@ -174,7 +174,7 @@ class Blocks:
                     # Check if the block is one of the specified random blocks (block 6, 5, or 2) and apply a
                     # downward movement.
                     if self.random_block == 6 or 5 or 2:
-                        self.down()  # Move the block downward if conditions are met.
+                        self.down(game_speed)  # Move the block downward if conditions are met.
             else:
                 # If the new block positions are out of bounds, revert back to the old block positions.
                 self.each_block = old_block
