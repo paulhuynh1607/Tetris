@@ -50,6 +50,7 @@ class HighScoreManager:
         return self.highscores.get(highest_score_user, 0)  # Return highest score (default 0 if no scores)
 
     def display_all_highscores(self):
+        self.get_highscore()  # sort and find the user with the highest score
         # Display all user highscores.
         print("Highscores:")
         # Iterate through all highscores and print them
@@ -86,6 +87,7 @@ class Scoreboard:
         self.curr_score += points
         self.text = self.font.render(f"Highscore: {self.highscore} Your Score: {self.curr_score}",
                                      True, self.color)
+        self.highscore_manager.add_score(self.username, self.curr_score)
 
     def check_score(self):
         # Check if the current score is higher than the highscore and update it if necessary.
