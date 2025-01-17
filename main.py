@@ -2,7 +2,7 @@ import pygame
 from pygame.locals import *  # Import constants for key events
 from blocks import Blocks  # Import the Blocks class
 from GameLoadout import Background  # Import the Background class
-from scoreboard import Scoreboard
+from scoreboard import Scoreboard  # Import the Scoreboard class
 
 
 # Pygame setup
@@ -24,6 +24,7 @@ timer = 0
 rotate_timer = 0
 game_speed = 1
 
+# Introduction
 print("Thank you for playing a replicate of the original Tetris by Paul Huynh")
 scoreboard.ask_username()
 
@@ -65,8 +66,8 @@ while running:
             print("Game starting over")
             game_speed = 1
 
-    scoreboard.check_score()
-    scoreboard.render(screen)
+    scoreboard.check_score()  # Check for higher score
+    scoreboard.render(screen)  # Render scoreboard on screen
 
     # Update the display with new frame content
     pygame.display.flip()
@@ -75,7 +76,7 @@ while running:
     dt = clock.tick(60) / 1000  # Convert milliseconds to seconds for dt
     timer += dt
     rotate_timer += dt
-    game_speed -= 0.02
+    game_speed = max(0.2, game_speed - 0.02)  # Ensure game_speed does not drop below 0.5
 
 # Quit pygame when the game loop ends
 pygame.quit()
